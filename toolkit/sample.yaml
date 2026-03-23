@@ -1,0 +1,31 @@
+Project: 
+
+Sequence_file:
+  file1: 
+    name:
+  file2:
+    name:
+
+Reference:
+  genome: 
+  gtf: 
+
+Out_dir:
+  dir: 
+
+Threads:
+
+Filter:
+  k:
+  hdist:
+  literal:  
+    linker1:
+    restrictleft1:
+    linker2:
+    restrictleft2:
+  skipr: #1/2
+  bc1_start:
+  bc1_end:
+  bc2_start:
+  bc2_end:
+  UMI: #0/10
