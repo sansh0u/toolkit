@@ -29,7 +29,7 @@ def run(config_path: str = typer.Option("-- config", help="Path to the configura
         filter(config_data)
         #过滤bc
         bc_pr(config_data)
-
+#运行完要把上一步文件删了
     elif method == 2:
         zUMIs(config_data)
 

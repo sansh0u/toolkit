@@ -6,17 +6,18 @@ import logging
 logger = logging.getLogger("toolkit")
 
 
-def bc_pr(config_data):
+def bc_pr(config):
     '''
     处理BCB_UMI格式的fastq文件,提取UMI和barcode,输出到新的fastq文件
     '''
-    skipr = config_data.get("Filter", {}).get("skipr", 1)
+    skipr = config.get("Filter", {}).get("skipr", 1)
     if skipr == 1:
-        input_file = config_data['Out_dir'] + "/linker2_R2.fastq.gz"
+        input_file = config['Out_dir'] + "/linker2_R2.fastq.gz"
     else:
-        input_file = config_data['Out_dir'] + "/linker2_R1.fastq.gz"
-    output_file_R1 = config_data['Out_dir'] + "/output_R1.fastq.gz"
-    output_file_R2 = config_data['Out_dir'] + "/output_R2.fastq.gz"
+        input_file = config['Out_dir'] + "/linker2_R1.fastq.gz"
+    output_file_R1 = config['Out_dir'] + "/output_R1.fastq.gz"
+    output_file_R2 = config['Out_dir'] + "/output_R2.fastq.gz"
+    
     #ap = argparse.ArgumentParser()
     #ap.add_argument("-i", "--input", required=True, help="input file")
     #ap.add_argument("-o1", "--output_R1", required=True, help="output file R1")
@@ -24,16 +25,16 @@ def bc_pr(config_data):
     #args = vars(ap.parse_args())
     #seq_start=117 # 22bp primer  + 8bp BC2 + 30bp linker2 + 8bp BC1 + 30bp linker1 + 19bp ME (chemV2 barcode B no UMI)
 
-    if config_data.get('Filter', {}).get('UMI', 10) == 0:
+    if config.get('Filter', {}).get('UMI', 10) == 0:
         seq_start = 117
     else:
         seq_start = 127
 
-    bc2_start = config_data.get('Filter', {}).get('bc2_start', 22)
-    bc2_end = config_data.get('Filter', {}).get('bc2_end', 30)
+    bc2_start = config.get('Filter', {}).get('bc2_start', 22)
+    bc2_end = config.get('Filter', {}).get('bc2_end', 30)
 
-    bc1_start = config_data.get('Filter', {}).get('bc1_start', 60)
-    bc1_end = config_data.get('Filter', {}).get('bc1_end', 68) 
+    bc1_start = config.get('Filter', {}).get('bc1_start', 60)
+    bc1_end = config.get('Filter', {}).get('bc1_end', 68) 
 
     with gzopen(input_file, "rt") as in_handle_R1, open(output_file_R1, "w") as out_handle_R1, open(output_file_R2, "w") as out_handle_R2:
         for title, seq, qual in FastqGeneralIterator(in_handle_R1):
