@@ -7,8 +7,17 @@ def chromap(config):
     """
     根据提供的配置对ATAC-seq数据进行chromap分析
     """
-    output_file_R1 = f"{config['Out_dir']}/output_R1.fastq.gz"
-    output_file_R2 = f"{config['Out_dir']}/linker2_R2.fastq.gz"
+    skipr = config.get("Filter", {}).get("skipr", 1)
+    if skipr == 1:
+        output_file_R2 = f"{config['Out_dir']['dir']}/linker2_R2.fastq.gz"
+    else:
+        output_file_R2 = f"{config['Out_dir']['dir']}/linker2_R1.fastq.gz"
+    output_file_R1 = f"{config['Out_dir']['dir']}/output_R1.fastq"
+    bc_file = f"{config['Out_dir']['dir']}/output_R2.fastq"
+    index_file = config['Reference']['genome']
+    fa_file = config['Reference']['gtf']
+    output_file = f"{config['Out_dir']['dir']}/output.bed"
+
     cmd = [ "chromap", 
         "--preset atac", "-x", index_file, 
         "-r", fa_file, 

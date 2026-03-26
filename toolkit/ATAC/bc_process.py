@@ -15,8 +15,8 @@ def bc_pr(config):
         input_file = config['Out_dir'] + "/linker2_R2.fastq.gz"
     else:
         input_file = config['Out_dir'] + "/linker2_R1.fastq.gz"
-    output_file_R1 = config['Out_dir'] + "/output_R1.fastq.gz"
-    output_file_R2 = config['Out_dir'] + "/output_R2.fastq.gz"
+    output_file_R1 = config['Out_dir'] + "/output_R1.fastq"
+    output_file_R2 = config['Out_dir'] + "/output_R2.fastq"
     
     #ap = argparse.ArgumentParser()
     #ap.add_argument("-i", "--input", required=True, help="input file")

@@ -1,16 +1,18 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="mycli-package",
+    name="toolkit",
     version="1.0.0",
     packages=find_packages(),
     install_requires=[
         "typer",
         "pyyaml",
+        "biopython",
+        "chromap",
     ],
     entry_points={
         "console_scripts": [
-            "runcli = cli:app",  # Typer 会自动处理这个入口
+            "toolkit = toolkit.cli:app",  #修改toolkit名字
         ],
     },
 )
