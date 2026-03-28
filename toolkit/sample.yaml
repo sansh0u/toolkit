@@ -1,20 +1,25 @@
-Project: 
+Project: test
 
 TEST:
 Sequence_file:
   file1: 
-    name:
+    name: /home/sanshou/project/toolkit/KI_1018_50_1.fq.gz
+    name2: KI_1018_50_CKDL240035881-1A_22HNF7LT4_L4_1.fq.gz
   file2:
-    name:
+    name: /home/sanshou/project/toolkit/KI_1018_50_2.fq.gz
+    name2: KI_1018_50_CKDL240035881-1A_22HNF7LT4_L4_2.fq.gz
 
 Reference:
-  genome: 
-  gtf: 
+  index_file: /home/sanshou/project/toolkit/toolkit/index/GRCm38.primary_assembly.genome.index
+  fa_file: /home/sanshou/project/toolkit/toolkit/index/GRCm38.primary_assembly.genome.fa
+
+Barcode:
+  file: /home/sanshou/project/toolkit/toolkit/barcode/20240614_2500barcode_AB_update.txt
 
 Out_dir:
-  dir: 
+  dir: /home/sanshou/project/toolkit/output
 
-Threads:
+Threads: 8
 
 Filter:
   k:
@@ -25,8 +30,8 @@ Filter:
     linker2:
     restrictleft2:
   skipr: #1/2
-  bc1_start:
-  bc1_end:
-  bc2_start:
-  bc2_end:
-  UMI: #0/10
+  bc1_start: 60
+  bc1_end: 68
+  bc2_start: 22
+  bc2_end: 30
+  seq_start: 117

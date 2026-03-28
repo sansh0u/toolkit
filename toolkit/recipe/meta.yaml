@@ -18,16 +18,19 @@ build:
     set -e
     cd $SRC_DIR
   
-    tar -xzf BBTools.tar.gz 
-    rm BBTools.tar.gz
+    tar -xzf BBMap_39.80.tar.gz 
+    rm BBMap_39.80.tar.gz
 
     mkdir -p $PREFIX/share/bbmap
     cp -r bbmap/* $PREFIX/share/bbmap/
 
     mkdir -p $PREFIX/bin
-    echo '#!/bin/bash' > $PREFIX/bin/bbduk
-    echo 'bash $PREFIX/share/bbtools/bbduk.sh "$@"' >> $PREFIX/bin/bbduk
+    cat <<EOF > $PREFIX/bin/bbduk
+    #!/bin/bash
+    exec "$PREFIX/share/bbmap/bbduk.sh" "\$@"
+    EOF
     chmod +x $PREFIX/bin/bbduk
+    rm -rf bbmap
 
     cd $SRC_DIR
     {{ PYTHON }} -m pip install . --no-deps -vv #在测试时加-vv
@@ -39,9 +42,11 @@ requirements:
   run:
     - python >=3.10
     - biopython
-    - pyyaml
+    - pyyaml 
     - chromap
-    - openjdk
+    - openjdk >=11
+    - pigz =2.6
+    - htslib = 1.13+ds
 about:
   home: https://github.com/sansh0u/toolkit
   summary: "My bioinformatics tool"

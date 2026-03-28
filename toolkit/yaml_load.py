@@ -43,3 +43,11 @@ def load_yaml(config_path):
 #config, method = load_yaml("/home/sanshou/projects/tool/dbit/zUMIs.yaml")
 #print(method)
     
+
+def merge_config(config, default_config):
+    for key, value in default_config.items():
+        if key not in config or config[key] is None:
+            config[key] = value
+        elif isinstance(value, dict):
+            config[key] = merge_config(config.get(key, {}), value)
+    return config

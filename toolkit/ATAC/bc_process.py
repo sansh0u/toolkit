@@ -1,6 +1,7 @@
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from gzip import open as gzopen
 import logging
+import subprocess
 #import argparse
 
 logger = logging.getLogger("toolkit")
@@ -10,13 +11,16 @@ def bc_pr(config):
     '''
     处理BCB_UMI格式的fastq文件,提取UMI和barcode,输出到新的fastq文件
     '''
-    skipr = config.get("Filter", {}).get("skipr", 1)
+    skipr = config['Filter']['skipr']
     if skipr == 1:
-        input_file = config['Out_dir'] + "/linker2_R2.fastq.gz"
+        input_file = config['Out_dir']['dir'] + "/linker2_R2.fastq.gz"
+    
     else:
-        input_file = config['Out_dir'] + "/linker2_R1.fastq.gz"
-    output_file_R1 = config['Out_dir'] + "/output_R1.fastq"
-    output_file_R2 = config['Out_dir'] + "/output_R2.fastq"
+        input_file = config['Out_dir']['dir'] + "/linker2_R1.fastq.gz"
+    
+    
+    output_file_R1 = config['Out_dir']['dir'] + "/output_R1.fastq"
+    output_file_R2 = config['Out_dir']['dir'] + "/output_R2.fastq"
     
     #ap = argparse.ArgumentParser()
     #ap.add_argument("-i", "--input", required=True, help="input file")
@@ -25,16 +29,23 @@ def bc_pr(config):
     #args = vars(ap.parse_args())
     #seq_start=117 # 22bp primer  + 8bp BC2 + 30bp linker2 + 8bp BC1 + 30bp linker1 + 19bp ME (chemV2 barcode B no UMI)
 
-    if config.get('Filter', {}).get('UMI', 10) == 0:
-        seq_start = 117
-    else:
-        seq_start = 127
+    
+    seq_start = config['Filter']['seq_start']
 
-    bc2_start = config.get('Filter', {}).get('bc2_start', 22)
-    bc2_end = config.get('Filter', {}).get('bc2_end', 30)
+    bc2_start = config['Filter']['bc2_start']
+    bc2_end = config['Filter']['bc2_end']
 
-    bc1_start = config.get('Filter', {}).get('bc1_start', 60)
-    bc1_end = config.get('Filter', {}).get('bc1_end', 68) 
+    bc1_start = config['Filter']['bc1_start']
+    bc1_end = config['Filter']['bc1_end']
+    
+    print(f"input_file: {input_file}")
+    print(f"output_file_R1: {output_file_R1}")
+    print(f"output_file_R2: {output_file_R2}")
+    print(f"seq_start: {seq_start}")
+    print(f"bc2_start: {bc2_start}")
+    print(f"bc2_end: {bc2_end}")
+    print(f"bc1_start: {bc1_start}")
+    print(f"bc1_end: {bc1_end}")
 
     with gzopen(input_file, "rt") as in_handle_R1, open(output_file_R1, "w") as out_handle_R1, open(output_file_R2, "w") as out_handle_R2:
         for title, seq, qual in FastqGeneralIterator(in_handle_R1):
@@ -44,3 +55,6 @@ def bc_pr(config):
             new_qual_R2 = qual[bc2_start:bc2_end] + qual[bc1_start:bc1_end]        
             out_handle_R1.write("@%s\n%s\n+\n%s\n" % (title, new_seq_R1, new_qual_R1))
             out_handle_R2.write("@%s\n%s\n+\n%s\n" % (title, barcode, new_qual_R2))
+    
+    subprocess.run(["pigz", "-p", "12", "-f", output_file_R1], check=True)
+    subprocess.run(["pigz", "-p", "12", "-f", output_file_R2], check=True)
