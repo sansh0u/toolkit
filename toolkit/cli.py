@@ -48,7 +48,7 @@ def run(config_path: str = typer.Option(...,"--config", help="Path to the config
     if method == 1:
         os.makedirs(config['Out_dir']['dir'], exist_ok=True)
         #qc
-        #filter(config)
+        filter(config)
         #过滤bc
         bc_pr(config)
         chromap(config)
