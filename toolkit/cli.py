@@ -21,7 +21,7 @@ DEFAULT_CONFIG = {
         "skipr": 1,
         
         "literal": {
-            "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT",
+            "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
             "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
             "restrictleft1": 108,
             "restrictleft2": 70
