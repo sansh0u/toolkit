@@ -13,19 +13,19 @@ def filter(config):
 
     # Placeholder for actual filtering logic需要校对logo信息
     logger.info("Starting ATAC-seq quality control filtering...")
-    skipr = config['Filter']['skipr']
+    skipr = config['Literal']['skipr']
     cmd1 =  [
         "bbduk",
-        f"in={config['Sequence_file']['file1']['name']}",
+        f"in={config['Sequence_file']['file1']['name']}", #merge 两个文件
         f"in2={config['Sequence_file']['file2']['name']}",
         f"outm={config['Out_dir']['dir']}/linker1_R1.fastq.gz", ####改名字
         f"outm2={config['Out_dir']['dir']}/linker1_R2.fastq.gz", ####
-        f"hdist={config['Filter']['hdist']}",
-        f"k={config['Filter']['k']}",
-        f"literal={config['Filter']['literal']['linker1']}",
+        f"hdist={config['preprocess']['hdist']}",
+        f"k={config['preprocess']['k1']}",
+        f"literal={config['Literal']['linker1']}",
         f"threads={config['Threads']}",
         "mm=f", "rcomp=f", f"skipr{skipr}=t",
-        f"restrictleft={config['Filter']['literal']['restrictleft1']}"
+        f"restrictleft={config['preprocess']['restrictleft1']}"
     ]
 
     cmd2 =  [
@@ -34,12 +34,12 @@ def filter(config):
         f"in2={config['Out_dir']['dir']}/linker1_R2.fastq.gz",
         f"outm={config['Out_dir']['dir']}/linker2_R1.fastq.gz", ####
         f"outm2={config['Out_dir']['dir']}/linker2_R2.fastq.gz", ####
-        f"hdist={config['Filter']['hdist']}",
-        f"k={config['Filter']['k']}",
-        f"literal={config['Filter']['literal']['linker2']}",
+        f"hdist={config['preprocess']['hdist']}",
+        f"k={config['preprocess']['k2']}",
+        f"literal={config['Literal']['linker2']}",
         f"threads={config['Threads']}",
         "mm=f", "rcomp=f", f"skipr{skipr}=t",
-        f"restrictleft={config['Filter']['literal']['restrictleft2']}"
+        f"restrictleft={config['preprocess']['restrictleft2']}"
     ]
 
     try: ####

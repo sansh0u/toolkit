@@ -2,36 +2,31 @@
 import typer
 import os
 import logging
-from yaml_load import load_yaml
+from yaml_load import load_yaml,merge_config, config_cal
 from logger import setup_logger
 from DBiT_RNA.run_zUMIs import zUMIs
 from ATAC.qc import filter
 from ATAC.bc_process import bc_pr
-from ATAC.chromap import chromap
-from yaml_load import merge_config
+from ATAC.chromap import chromap, sort_bed
+
+
+
 app = typer.Typer(help = "toolkit", no_args_is_help = True)
 
 setup_logger()
 logger = logging.getLogger("toolkit")
 
 DEFAULT_CONFIG = {
-    "Filter": {
-        "hdist": 3,
-        "k": 30,
+    "Project": "test",
+    "Literal": {
+        "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
+        "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
         "skipr": 1,
-        
-        "literal": {
-            "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
-            "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
-            "restrictleft1": 108,
-            "restrictleft2": 70
+        "UMI": 10,
         },
-        "seq_start": 127,
-        "bc2_start": 22,
-        "bc2_end": 30,
-        "bc1_start": 60,
-        "bc1_end": 68
-    },
+    "Advanced":{
+        "primer": 22
+        },
     "Threads": 12
 }
 
@@ -45,6 +40,8 @@ def run(config_path: str = typer.Option(...,"--config", help="Path to the config
     config, method = load_yaml(config_path)
     #加个log
     config = merge_config(config, DEFAULT_CONFIG)
+    config = config_cal(config)
+    print(config)
     if method == 1:
         os.makedirs(config['Out_dir']['dir'], exist_ok=True)
         #qc
@@ -52,6 +49,7 @@ def run(config_path: str = typer.Option(...,"--config", help="Path to the config
         #过滤bc
         bc_pr(config)
         chromap(config)
+        sort_bed(config)
 #运行完要把上一步文件删了
     elif method == 2:
         zUMIs(config)

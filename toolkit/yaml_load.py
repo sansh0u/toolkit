@@ -37,9 +37,17 @@ def load_yaml(config_path):
             method = 1
         else:
             method = 2
+    """
+    complement_table = str.maketrans(
+        "ACGTNacgtn",
+        "TGCANtgcan"
+    )
+
+    config['Literal']['linker1'] = config['Literal']['linker1'].translate(complement_table)[::-1]
+    config['Literal']['linker2'] = config['Literal']['linker2'].translate(complement_table)[::-1]
+    
+ """
     return config, method
-
-
 #config, method = load_yaml("/home/sanshou/projects/tool/dbit/zUMIs.yaml")
 #print(method)
     
@@ -50,4 +58,34 @@ def merge_config(config, default_config):
             config[key] = value
         elif isinstance(value, dict):
             config[key] = merge_config(config.get(key, {}), value)
+    return config
+
+def config_cal(config):
+    """
+    计算配置文件中的参数
+    """
+    
+    k1 = len(config['Literal']['linker1'])
+    k2 = len(config['Literal']['linker2'])
+    hdist = 3
+    bc2_start = config['Advanced']['primer'] + config['Literal']['UMI']
+    bc2_end = bc2_start + 8
+    bc1_start = bc2_end + k2
+    bc1_end = bc1_start + 8 #8bp barcode
+    restrictleft1 = bc1_end + 10
+    restrictleft2 = bc2_end + 10
+    seq_start = bc1_end + k1 + 19
+    config['preprocess'] = {
+        'k1': k1,
+        'k2': k2,
+        'hdist': hdist,
+        'bc2_start': bc2_start,
+        'bc2_end': bc2_end,
+        'bc1_start': bc1_start,
+        'bc1_end': bc1_end,
+        'restrictleft1': restrictleft1,
+        'restrictleft2': restrictleft2,
+        'seq_start': seq_start
+    }
+
     return config

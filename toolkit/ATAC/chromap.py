@@ -18,7 +18,7 @@ def chromap(config):
     b_file = f"{config['Out_dir']['dir']}/output_R2.fastq.gz"
     index_file = config['Reference']['index_file']
     fa_file = config['Reference']['fa_file']
-    output_file = f"{config['Out_dir']['dir']}/output.bed"
+    output_file = f"{config['Out_dir']['dir']}/{config['Project']}.bed"
     bc_file = config['Barcode']['file']
 
     cmd = [ "chromap", 
@@ -37,3 +37,19 @@ def chromap(config):
     except subprocess.CalledProcessError as e:
         logger.error(f"Error during chromap analysis: {e}")
         raise
+    subprocess.run(["rm", "-r",output_file_R1, output_file_R2, b_file], check=True)
+
+
+def sort_bed(config):
+    """
+    对chromap输出的bed文件进行排序
+    """
+    output_file = f"{config['Out_dir']['dir']}/{config['Project']}"
+    subprocess.run(["sort", "-k1,1 -k2,2n -k3,3n -k4,4", f" --parallel={config['Threads']}", "-S 36G", output_file +".bed", ">", output_file + "_sorted.bed"], check=True)
+    subprocess.run(["bgzip", output_file + "_sorted.bed" ,"@", config['Threads']], check=True)
+    subprocess.run(["tabix", "-p", "bed", output_file + "_sorted.bed.gz"], check=True)
+
+#sort -k1,1 -k2,2n -k3,3n -k4,4 --parallel=12 -S 36G KI_1018_50.bed > KI_1018_50_sorted.bed
+#module load tabix
+#bgzip KI_1018_50_sorted.bed
+#tabix -p bed KI_1018_50_sorted.bed.gz

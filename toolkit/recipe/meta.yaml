@@ -41,12 +41,12 @@ requirements:
     - pip
   run:
     - python >=3.10
-    - biopython
-    - pyyaml 
-    - chromap
-    - openjdk >=11
-    - pigz =2.6
-    - htslib = 1.13+ds
+    - biopython >= 1.86
+    - pyyaml >= 6.0.3
+    - chromap >= 0.3.2
+    - openjdk >= 11
+    - pigz >= 2.6
+    - htslib >= 1.13+ds
 about:
   home: https://github.com/sansh0u/toolkit
   summary: "My bioinformatics tool"

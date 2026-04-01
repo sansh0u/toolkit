@@ -1,3 +1,6 @@
+
+
+
 zUMIs:
   samtools >= 1.5 🔧 [tested: 1.7, 1.9, 1.10] Note: For non-UMI based methods, it is highly recommended to use samtools 1.7 and higher.
   STAR >= 2.5.4b 🌟 [RECOMMENDED: 2.5.4b or 2.7.X] Note: Some users have reported that some STAR versions (e.g. 2.6.0a) may produce problems when generating the reference index without GTF files.
