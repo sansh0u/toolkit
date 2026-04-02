@@ -1,6 +1,6 @@
 Project: #test
 
-Method:
+Method: #dbit/atac/co_atac/co_rna/patho_dbit/patho_atac
 
 Sequence_file:
   file1: 
@@ -8,7 +8,6 @@ Sequence_file:
     
   file2:
     name: /home/sansh0u/project/toolkit/KI_1018_50_2.fq.gz
-
 
 Reference:
   index_file: /home/sansh0u/project/toolkit/toolkit/index/GRCm38.primary_assembly.genome.index
@@ -22,11 +21,11 @@ Out_dir:
 
 Threads: 8
 
-Literal:
+Advanced:
   linker1:
   linker2:
   skipr: #1/2
   UMI: #0/10
-
-Advanced:
   primer: #22
+  hdist: #3
+  rna_lib: #pcr/illumin

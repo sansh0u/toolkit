@@ -2,7 +2,7 @@
 import typer
 import os
 import logging
-from yaml_load import load_yaml,merge_config, config_cal
+from yaml_load import load_yaml,merge_config, config_cal, get_config
 from logger import setup_logger
 from DBiT_RNA.run_zUMIs import zUMIs
 from ATAC.qc import filter
@@ -18,14 +18,13 @@ logger = logging.getLogger("toolkit")
 
 DEFAULT_CONFIG = {
     "Project": "test",
-    "Literal": {
+    "Advanced":{
         "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
         "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
         "skipr": 1,
         "UMI": 10,
-        },
-    "Advanced":{
-        "primer": 22
+        "primer": 22,
+        "hdist": 3,
         },
     "Threads": 12
 }
@@ -37,12 +36,12 @@ def ask(name = str, default = None):
 @app.command()
 def run(config_path: str = typer.Option(...,"--config", help="Path to the configuration YAML file")):
     """运行任务并加载配置文件"""
-    config, method = load_yaml(config_path)
+    config = load_yaml(config_path)
     #加个log
     config = merge_config(config, DEFAULT_CONFIG)
     config = config_cal(config)
     print(config)
-    if method == 1:
+    """if method == 1:
         os.makedirs(config['Out_dir']['dir'], exist_ok=True)
         #qc
         filter(config)
@@ -53,6 +52,6 @@ def run(config_path: str = typer.Option(...,"--config", help="Path to the config
 #运行完要把上一步文件删了
     elif method == 2:
         zUMIs(config)
-
+"""
 if __name__ == "__main__":
     app()

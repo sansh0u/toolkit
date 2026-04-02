@@ -9,6 +9,21 @@ import logging
 
 logger = logging.getLogger("toolkit")
 
+def get_config(config, key):
+    if isinstance(config, dict):
+        if key in config:
+            return config[key]
+        for v in config.values():
+            result = get_config(v, key)
+            if result is not None:
+                return result
+    elif isinstance(config, list):
+        for item in config:
+            result = get_config(item, key)
+            if result is not None:
+                return result
+    return None
+
 def load_yaml(config_path):
     """
     Load YAML configuration file. 加载并判断YAML配置文件是否存在并可解析(已完成)
@@ -30,14 +45,22 @@ def load_yaml(config_path):
         logger.error("YAML file is empty.")
         return None
     #直接输出config，要什么调用的时候自己取
+    return config
 
+def method_check(config):
+    """
+    检查配置文件中的method
+    """
+
+
+"""
     if config:
         first_key = list(config.keys())[0]  # 获取字典的第一个键
         if first_key[0].isupper():
             method = 1
         else:
             method = 2
-    """
+
     complement_table = str.maketrans(
         "ACGTNacgtn",
         "TGCANtgcan"
@@ -47,11 +70,9 @@ def load_yaml(config_path):
     config['Literal']['linker2'] = config['Literal']['linker2'].translate(complement_table)[::-1]
     
  """
-    return config, method
 #config, method = load_yaml("/home/sanshou/projects/tool/dbit/zUMIs.yaml")
 #print(method)
     
-
 def merge_config(config, default_config):
     for key, value in default_config.items():
         if key not in config or config[key] is None:
@@ -64,21 +85,19 @@ def config_cal(config):
     """
     计算配置文件中的参数
     """
-    
-    k1 = len(config['Literal']['linker1'])
-    k2 = len(config['Literal']['linker2'])
-    hdist = 3
-    bc2_start = config['Advanced']['primer'] + config['Literal']['UMI']
+    method_check(config)
+    k1 = len(get_config(config, "linker1"))
+    k2 = len(get_config(config, "linker2"))
+    bc2_start = get_config(config, "primer") + get_config(config, "UMI")
     bc2_end = bc2_start + 8
     bc1_start = bc2_end + k2
     bc1_end = bc1_start + 8 #8bp barcode
-    restrictleft1 = bc1_end + 10
-    restrictleft2 = bc2_end + 10
+    restrictleft1 = bc1_end + k2 + 10
+    restrictleft2 = bc2_end + k1 + 10
     seq_start = bc1_end + k1 + 19
     config['preprocess'] = {
         'k1': k1,
         'k2': k2,
-        'hdist': hdist,
         'bc2_start': bc2_start,
         'bc2_end': bc2_end,
         'bc1_start': bc1_start,
@@ -89,3 +108,4 @@ def config_cal(config):
     }
 
     return config
+

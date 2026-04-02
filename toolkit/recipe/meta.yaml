@@ -47,6 +47,7 @@ requirements:
     - openjdk >= 11
     - pigz >= 2.6
     - htslib >= 1.13+ds
+    - cutadapt >= 3.5
 about:
   home: https://github.com/sansh0u/toolkit
   summary: "My bioinformatics tool"

@@ -1,5 +1,6 @@
 import subprocess
 import logging
+from yaml_load import get_config
 
 logger = logging.getLogger("toolkit")
 
@@ -13,33 +14,44 @@ def filter(config):
 
     # Placeholder for actual filtering logic需要校对logo信息
     logger.info("Starting ATAC-seq quality control filtering...")
-    skipr = config['Literal']['skipr']
+    skipr = get_config(config, "skipr")
+    out_dir = get_config(config, "dir")
+    in1 = get_config(config, "file1")
+    in2 = get_config(config, "file2")
+    k1 = get_config(config, "k1")
+    k2 = get_config(config, "k2")
+    hdist = get_config(config, "hdist")
+    threads = get_config(config, "Threads")
+    linker1 = get_config(config, "linker1")
+    linker2 = get_config(config, "linker2")
+    restrictleft1 = get_config(config, "restrictleft1")
+    restrictleft2 = get_config(config, "restrictleft2")
     cmd1 =  [
         "bbduk",
-        f"in={config['Sequence_file']['file1']['name']}", #merge 两个文件
-        f"in2={config['Sequence_file']['file2']['name']}",
-        f"outm={config['Out_dir']['dir']}/linker1_R1.fastq.gz", ####改名字
-        f"outm2={config['Out_dir']['dir']}/linker1_R2.fastq.gz", ####
-        f"hdist={config['preprocess']['hdist']}",
-        f"k={config['preprocess']['k1']}",
-        f"literal={config['Literal']['linker1']}",
-        f"threads={config['Threads']}",
+        f"in={in1}", #merge 两个文件
+        f"in2={in2}",
+        f"outm={out_dir}/linker1_R1.fastq.gz", ####改名字
+        f"outm2={out_dir}/linker1_R2.fastq.gz", ####
+        f"hdist={hdist}",
+        f"k={k1}",
+        f"literal={linker1}",
+        f"threads={threads}",
         "mm=f", "rcomp=f", f"skipr{skipr}=t",
-        f"restrictleft={config['preprocess']['restrictleft1']}"
+        f"restrictleft={restrictleft1}"
     ]
 
     cmd2 =  [
         "bbduk",
-        f"in={config['Out_dir']['dir']}/linker1_R1.fastq.gz",
-        f"in2={config['Out_dir']['dir']}/linker1_R2.fastq.gz",
-        f"outm={config['Out_dir']['dir']}/linker2_R1.fastq.gz", ####
-        f"outm2={config['Out_dir']['dir']}/linker2_R2.fastq.gz", ####
-        f"hdist={config['preprocess']['hdist']}",
-        f"k={config['preprocess']['k2']}",
-        f"literal={config['Literal']['linker2']}",
+        f"in={out_dir}/linker1_R1.fastq.gz",
+        f"in2={out_dir}/linker1_R2.fastq.gz",
+        f"outm={out_dir}/linker2_R1.fastq.gz", ####
+        f"outm2={out_dir}/linker2_R2.fastq.gz", ####
+        f"hdist={hdist}",
+        f"k={k2}",
+        f"literal={linker2}",
         f"threads={config['Threads']}",
         "mm=f", "rcomp=f", f"skipr{skipr}=t",
-        f"restrictleft={config['preprocess']['restrictleft2']}"
+        f"restrictleft={restrictleft2}"
     ]
 
     try: ####
@@ -52,4 +64,4 @@ def filter(config):
         raise
 
     logger.info("ATAC-seq quality control filtering completed.")
-    subprocess.run(["rm", "-r",f"{config['Out_dir']['dir']}/linker1_R1.fastq.gz", f"{config['Out_dir']['dir']}/linker1_R2.fastq.gz"], check=True)
+    subprocess.run(["rm", "-r",f"{out_dir}/linker1_R1.fastq.gz", f"{out_dir}/linker1_R2.fastq.gz"], check=True)

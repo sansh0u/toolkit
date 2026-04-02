@@ -2,6 +2,7 @@ from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from gzip import open as gzopen
 import logging
 import subprocess
+from yaml_load import get_config
 #import argparse
 
 logger = logging.getLogger("toolkit")
@@ -30,13 +31,11 @@ def bc_pr(config):
     #seq_start=117 # 22bp primer  + 8bp BC2 + 30bp linker2 + 8bp BC1 + 30bp linker1 + 19bp ME (chemV2 barcode B no UMI)
 
     
-    seq_start = config['preprocess']['seq_start']
-
-    bc2_start = config['preprocess']['bc2_start']
-    bc2_end = config['preprocess']['bc2_end']
-
-    bc1_start = config['preprocess']['bc1_start']
-    bc1_end = config['preprocess']['bc1_end']
+    seq_start = get_config(config, "seq_start")
+    bc2_start = get_config(config, "bc2_start")
+    bc2_end = get_config(config, "bc2_end")
+    bc1_start = get_config(config, "bc1_start")
+    bc1_end = get_config(config, "bc1_end")
     
     print(f"input_file: {input_file}")
     print(f"output_file_R1: {output_file_R1}")
