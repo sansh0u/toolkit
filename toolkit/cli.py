@@ -16,6 +16,70 @@ app = typer.Typer(help = "toolkit", no_args_is_help = True)
 setup_logger()
 logger = logging.getLogger("toolkit")
 
+DBit_seq = {
+    "Project": "test",
+    "Advanced": {
+        "skipr": 2,
+        "primer": 22,
+        "hdist": 3,
+        "rna_lib": "illumina",
+        "primer5": "AAGCAGTGGTATCAACGCAGAGTGAATGGG"
+        }
+}
+ATAC_seq  = {
+    "Project": "test",
+        "Advanced":{
+            "linker1": "AGATGTGTATAAGAGACAGCATCGGCGTACGACT", 
+            "linker2": "CGAATGCTCTGGCCTCTCAAGCACGTGGAT",
+            "skipr": 2,
+            "UMI": 0,
+            "primer": 0,
+            "hdist": 3,
+        }
+}
+
+co_ATAC = {
+    "Project": "test",
+    "Advanced":{
+        "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
+        "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
+        "skipr": 1,
+        "UMI": 0,
+        "primer": 22,
+        "hdist": 3,
+        }
+}
+
+co_RNA = {
+
+}
+
+Patho_DBit = {
+    "Project": "test",
+    "Advanced":{
+        "skipr": 1,
+        "UMI": 10,
+        "primer": 22,
+        "hdist": 3,
+        "rna_lib": "illumina",
+        "primer5": "AAGCAGTGGTATCAACGCAGAGTGAATGGG"
+        }
+}
+
+Patho_ATAC = {
+    "Project": "test",
+    "Advanced":{
+        "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
+        "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
+        "skipr": 1,
+        "UMI": 0,
+        "primer": 22,
+        "hdist": 3,
+        }
+}
+
+
+
 DEFAULT_CONFIG = {
     "Project": "test",
     "Advanced":{

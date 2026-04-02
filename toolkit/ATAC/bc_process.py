@@ -14,14 +14,14 @@ def bc_pr(config):
     '''
     skipr = config['Filter']['skipr']
     if skipr == 1:
-        input_file = config['Out_dir']['dir'] + "/linker2_R2.fastq.gz"
+        input_file = get_config(config, "dir") + "/linker2_R2.fastq.gz"
     
     else:
-        input_file = config['Out_dir']['dir'] + "/linker2_R1.fastq.gz"
+        input_file = get_config(config, "dir") + "/linker2_R1.fastq.gz"
     
     
-    output_file_R1 = config['Out_dir']['dir'] + "/output_R1.fastq"
-    output_file_R2 = config['Out_dir']['dir'] + "/output_R2.fastq"
+    output_file_R1 = get_config(config, "dir") + "/output_R1.fastq"
+    output_file_R2 = get_config(config, "dir") + "/output_R2.fastq"
     
     #ap = argparse.ArgumentParser()
     #ap.add_argument("-i", "--input", required=True, help="input file")
