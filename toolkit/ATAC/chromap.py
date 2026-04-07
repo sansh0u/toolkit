@@ -1,5 +1,6 @@
 import logging
 import subprocess
+from yaml_load import get_config
 
 logger = logging.getLogger("toolkit")
 
@@ -7,19 +8,19 @@ def chromap(config):
     """
     根据提供的配置对ATAC-seq数据进行chromap分析
     """
-    skipr = config['Filter']['skipr']
+    skipr = get_config(config, "skipr")
     if skipr == 1:
-        output_file_R2 = f"{config['Out_dir']['dir']}/linker2_R1.fastq.gz"
-        subprocess.run(["rm", f"{config['Out_dir']['dir']}/linker2_R2.fastq.gz"], check=True)
+        output_file_R2 = f"{get_config(config, 'dir')}/linker2_R1.fastq.gz"
+        subprocess.run(["rm", f"{get_config(config, 'dir')}/linker2_R2.fastq.gz"], check=True)
     else:
-        output_file_R2 = f"{config['Out_dir']['dir']}/linker2_R2.fastq.gz"
-        subprocess.run(["rm", f"{config['Out_dir']['dir']}/linker2_R1.fastq.gz"], check=True)
-    output_file_R1 = f"{config['Out_dir']['dir']}/output_R1.fastq.gz"
-    b_file = f"{config['Out_dir']['dir']}/output_R2.fastq.gz"
-    index_file = config['Reference']['index_file']
-    fa_file = config['Reference']['fa_file']
-    output_file = f"{config['Out_dir']['dir']}/{config['Project']}.bed"
-    bc_file = config['Barcode']['file']
+        output_file_R2 = f"{get_config(config, 'dir')}/linker2_R2.fastq.gz"
+        subprocess.run(["rm", f"{get_config(config, 'dir')}/linker2_R1.fastq.gz"], check=True)
+    output_file_R1 = f"{get_config(config, 'dir')}/output_R1.fastq.gz"
+    b_file = f"{get_config(config, 'dir')}/output_R2.fastq.gz"
+    index_file = get_config(config, 'index_file')
+    fa_file = get_config(config, 'fa_file')
+    output_file = f"{get_config(config, 'dir')}/{get_config(config, 'Project')}.bed"
+    bc_file = get_config(config, 'file')
 
     cmd = [ "chromap", 
         "--preset", "atac", "-x", index_file, 
@@ -44,10 +45,36 @@ def sort_bed(config):
     """
     对chromap输出的bed文件进行排序
     """
-    output_file = f"{config['Out_dir']['dir']}/{config['Project']}"
-    subprocess.run(["sort", "-k1,1 -k2,2n -k3,3n -k4,4", f" --parallel={config['Threads']}", "-S 36G", output_file +".bed", ">", output_file + "_sorted.bed"], check=True)
-    subprocess.run(["bgzip", output_file + "_sorted.bed" ,"@", config['Threads']], check=True)
-    subprocess.run(["tabix", "-p", "bed", output_file + "_sorted.bed.gz"], check=True)
+    
+    #subprocess.run(["sort", "-k1,1", "-k2,2n", "-k3,3n", "-k4,4", f"--parallel={get_config(config, 'Threads')}", "-S 36G", output_file +".bed", ">", output_file + "_sorted.bed"], check=True)
+    threads = str(get_config(config, "Threads"))
+    output_file = f"{get_config(config, 'dir')}/{get_config(config, 'Project')}"
+    with open(output_file + "_sorted.bed", "w") as f:
+        subprocess.run([
+            "sort",
+            "-k1,1",
+            "-k2,2n",
+            "-k3,3n",
+            "-k4,4",
+            f"--parallel={threads}",
+            "-S", "36G",
+            output_file + ".bed"
+        ], stdout=f, check=True)
+
+    subprocess.run([
+        "bgzip",
+        "-@",
+        threads,
+        output_file + "_sorted.bed"
+    ], check=True)
+
+    subprocess.run([
+        "tabix",
+        "-p", "bed",
+        output_file + "_sorted.bed.gz"
+    ], check=True)
+    #subprocess.run(["bgzip", output_file + "_sorted.bed" ,"-@", get_config(config, 'Threads')], check=True)
+    #subprocess.run(["tabix", "-p", "bed", output_file + "_sorted.bed.gz"], check=True)
 
 #sort -k1,1 -k2,2n -k3,3n -k4,4 --parallel=12 -S 36G KI_1018_50.bed > KI_1018_50_sorted.bed
 #module load tabix

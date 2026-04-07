@@ -102,20 +102,26 @@ def run(config_path: str = typer.Option(...,"--config", help="Path to the config
     """运行任务并加载配置文件"""
     config = load_yaml(config_path)
     #加个log
-    config = merge_config(config, DEFAULT_CONFIG)
+    config = merge_config(config, Patho_ATAC)
     config = config_cal(config)
     print(config)
-    """if method == 1:
-        os.makedirs(config['Out_dir']['dir'], exist_ok=True)
+    """if method == 1:"""
+    os.makedirs(get_config(config, "dir"), exist_ok=True)
         #qc
-        filter(config)
+    #filter(config)
         #过滤bc
-        bc_pr(config)
-        chromap(config)
-        sort_bed(config)
+    #bc_pr(config)
+   # chromap(config)
+    sort_bed(config)
 #运行完要把上一步文件删了
+    
+    
+    
+"""
     elif method == 2:
         zUMIs(config)
+    
 """
+
 if __name__ == "__main__":
     app()

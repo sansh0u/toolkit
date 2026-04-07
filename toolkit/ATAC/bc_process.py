@@ -12,7 +12,7 @@ def bc_pr(config):
     '''
     处理BCB_UMI格式的fastq文件,提取UMI和barcode,输出到新的fastq文件
     '''
-    skipr = config['Filter']['skipr']
+    skipr = get_config(config, "skipr")
     if skipr == 1:
         input_file = get_config(config, "dir") + "/linker2_R2.fastq.gz"
     
