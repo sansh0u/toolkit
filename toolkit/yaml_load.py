@@ -9,6 +9,68 @@ import logging
 
 logger = logging.getLogger("toolkit")
 
+DBit_seq = {
+    "Project": "test",
+    "Advanced": {
+        "skipr": 2,
+        "primer": 22,
+        "hdist": 3,
+        "rna_lib": "illumina",
+        "primer5": "AAGCAGTGGTATCAACGCAGAGTGAATGGG"
+        }
+}
+ATAC_seq  = {
+    "Project": "test",
+        "Advanced":{
+            "linker1": "AGATGTGTATAAGAGACAGCATCGGCGTACGACT", 
+            "linker2": "CGAATGCTCTGGCCTCTCAAGCACGTGGAT",
+            "skipr": 2,
+            "UMI": 0,
+            "primer": 0,
+            "hdist": 3,
+        }
+}
+
+co_ATAC = {
+    "Project": "test",
+    "Advanced":{
+        "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
+        "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
+        "skipr": 1,
+        "UMI": 0,
+        "primer": 22,
+        "hdist": 3,
+        }
+}
+
+co_RNA = {
+
+}
+
+Patho_DBit = {
+    "Project": "test",
+    "Advanced":{
+        "skipr": 1,
+        "UMI": 10,
+        "primer": 22,
+        "hdist": 3,
+        "rna_lib": "illumina",
+        "primer5": "AAGCAGTGGTATCAACGCAGAGTGAATGGG"
+        }
+}
+
+Patho_ATAC = {
+    "Project": "test",
+    "Advanced":{
+        "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
+        "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
+        "skipr": 1,
+        "UMI": 0,
+        "primer": 22,
+        "hdist": 3,
+        }
+}
+
 def get_config(config, key):
     if isinstance(config, dict):
         if key in config:
@@ -51,25 +113,23 @@ def method_check(config):
     """
     检查配置文件中的method
     """
+    logger.info("Start method check.")
+    method = get_config(config, "Method")
+    method_dict = {
+    "dbit": DBit_seq,
+    "atac": ATAC_seq,
+    "co_atac": co_ATAC,
+    "co_rna": co_RNA,
+    "patho_dbit": Patho_DBit,
+    "patho_atac": Patho_ATAC
+}
+    if method not in method_dict:
+        raise ValueError(f"Unknown Method: {method}")
+    logger.info("Start merge config.")
+    merge_config(config, method_dict[method])
 
+    return config
 
-"""
-    if config:
-        first_key = list(config.keys())[0]  # 获取字典的第一个键
-        if first_key[0].isupper():
-            method = 1
-        else:
-            method = 2
-
-    complement_table = str.maketrans(
-        "ACGTNacgtn",
-        "TGCANtgcan"
-    )
-
-    config['Literal']['linker1'] = config['Literal']['linker1'].translate(complement_table)[::-1]
-    config['Literal']['linker2'] = config['Literal']['linker2'].translate(complement_table)[::-1]
-    
- """
 #config, method = load_yaml("/home/sanshou/projects/tool/dbit/zUMIs.yaml")
 #print(method)
     
@@ -83,9 +143,9 @@ def merge_config(config, default_config):
 
 def config_cal(config):
     """
-    计算配置文件中的参数
+    计算配置文件中的参数,还要分类dbit
     """
-    method_check(config)
+    config = method_check(config)
     k1 = len(get_config(config, "linker1"))
     k2 = len(get_config(config, "linker2"))
     bc2_start = get_config(config, "primer") + get_config(config, "UMI")

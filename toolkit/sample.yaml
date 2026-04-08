@@ -1,6 +1,6 @@
 Project: #test
 
-Method: #dbit/atac/co_atac/co_rna/patho_dbit/patho_atac
+Method: atac #dbit/atac/co_atac/co_rna/patho_dbit/patho_atac
 
 Sequence_file:
   file1:  /mnt/d/BaiduNetdiskDownload/ukb/KI_0209/KI_0209_L1_1.fq.gz

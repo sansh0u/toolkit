@@ -37,16 +37,18 @@ def bc_pr(config):
     bc1_start = get_config(config, "bc1_start")
     bc1_end = get_config(config, "bc1_end")
     
-    print(f"input_file: {input_file}")
-    print(f"output_file_R1: {output_file_R1}")
-    print(f"output_file_R2: {output_file_R2}")
-    print(f"seq_start: {seq_start}")
-    print(f"bc2_start: {bc2_start}")
-    print(f"bc2_end: {bc2_end}")
-    print(f"bc1_start: {bc1_start}")
-    print(f"bc1_end: {bc1_end}")
-
+    """
+    logger.info(f"input_file: {input_file}")
+    logger.info(f"output_file_R1: {output_file_R1}")
+    logger.info(f"output_file_R2: {output_file_R2}")
+    logger.info(f"seq_start: {seq_start}")
+    logger.info(f"bc2_start: {bc2_start}")
+    logger.info(f"bc2_end: {bc2_end}")
+    logger.info(f"bc1_start: {bc1_start}")
+    logger.info(f"bc1_end: {bc1_end}")
+    """
     with gzopen(input_file, "rt") as in_handle_R1, open(output_file_R1, "w") as out_handle_R1, open(output_file_R2, "w") as out_handle_R2:
+        logger.info("Start BC processing")
         for title, seq, qual in FastqGeneralIterator(in_handle_R1):
             new_seq_R1 = seq[seq_start:]
             new_qual_R1 = qual[seq_start:]

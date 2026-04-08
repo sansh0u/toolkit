@@ -19,3 +19,19 @@ def zUMIs(config_path):
     except subprocess.CalledProcessError as e:
         logger.error(f"Error during zUMIs: {e}")
         raise
+
+
+def run_pipeline(config):
+    stage = get_config(config, "which_Stage")
+
+    if stage in ["Filtering"]:
+        run_filtering(config)
+
+    if stage in ["Filtering", "Mapping"]:
+        run_mapping(config)
+
+    if stage in ["Filtering", "Mapping", "Counting"]:
+        run_counting(config)
+
+    if stage in ["Filtering", "Mapping", "Counting", "Summarising"]:
+        run_stats(config)
