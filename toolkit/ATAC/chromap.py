@@ -21,7 +21,7 @@ def chromap(config):
     fa_file = get_config(config, 'fa_file')
     output_file = f"{get_config(config, 'dir')}/{get_config(config, 'Project')}.bed"
     bc_file = get_config(config, 'file')
-
+    thread = str(get_config(config, 'Threads'))
     cmd = [ "chromap", 
         "--preset", "atac", "-x", index_file, 
         "-r", fa_file, 
@@ -29,14 +29,14 @@ def chromap(config):
         "-2", output_file_R2,
         "-b", b_file,
         "--barcode-whitelist", bc_file,
-        "-t", "12", "-o", output_file
+        "-t", thread, "-o", output_file
 ]
     try: ####
         subprocess.run(cmd, check=True)
-        logger.info("ATAC-seq filtering completed successfully.")
+        #logger.info("ATAC-seq filtering completed successfully.")
         #返回点东西让我知道成功了
     except subprocess.CalledProcessError as e:
-        logger.error(f"Error during chromap analysis: {e}")
+        #logger.error(f"Error during chromap analysis: {e}")
         raise
     subprocess.run(["rm", "-r",output_file_R1, output_file_R2, b_file], check=True)
 

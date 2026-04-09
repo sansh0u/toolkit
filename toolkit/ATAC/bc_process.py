@@ -48,7 +48,7 @@ def bc_pr(config):
     logger.info(f"bc1_end: {bc1_end}")
     """
     with gzopen(input_file, "rt") as in_handle_R1, open(output_file_R1, "w") as out_handle_R1, open(output_file_R2, "w") as out_handle_R2:
-        logger.info("Start BC processing")
+        #logger.info("Start BC processing")
         for title, seq, qual in FastqGeneralIterator(in_handle_R1):
             new_seq_R1 = seq[seq_start:]
             new_qual_R1 = qual[seq_start:]

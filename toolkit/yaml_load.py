@@ -12,7 +12,10 @@ logger = logging.getLogger("toolkit")
 DBit_seq = {
     "Project": "test",
     "Advanced": {
-        "skipr": 2,
+        "linker1": "", 
+        "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG", 
+        "skipr": 1,
+        "UMI": 10,
         "primer": 22,
         "hdist": 3,
         "rna_lib": "illumina",
@@ -43,13 +46,24 @@ co_ATAC = {
         }
 }
 
-co_RNA = {
-
+co_RNA = { ###10umi在后面
+    "Project": "test",
+    "Advanced":{
+        "linker1": "GTGGCCGATGTTTCGCATCGGCGTACGACT", 
+        "linker2": "ATCCACGTGCTTGAGAGGCCAGAGCATTCG",
+        "skipr": 1,
+        "UMI": 10,
+        "primer": 22,
+        "hdist": 3,
+        "rna_lib": "illumina",
+        "primer5": "AAGCAGTGGTATCAACGCAGAGTGAATGGG"
+        }
 }
 
 Patho_DBit = {
     "Project": "test",
     "Advanced":{
+
         "skipr": 1,
         "UMI": 10,
         "primer": 22,
@@ -101,10 +115,10 @@ def load_yaml(config_path):
         logging.error(f"Error parsing YAML file {config_path}: {e}")
         return None
     except Exception as e:
-        logger.error(f"Unexpected error reading config: {e}")
+        #logger.error(f"Unexpected error reading config: {e}")
         return None
     if config is None:
-        logger.error("YAML file is empty.")
+        #logger.error("YAML file is empty.")
         return None
     #直接输出config，要什么调用的时候自己取
     return config
@@ -113,7 +127,7 @@ def method_check(config):
     """
     检查配置文件中的method
     """
-    logger.info("Start method check.")
+    #logger.info("Start method check.")
     method = get_config(config, "Method")
     method_dict = {
     "dbit": DBit_seq,
@@ -125,9 +139,13 @@ def method_check(config):
 }
     if method not in method_dict:
         raise ValueError(f"Unknown Method: {method}")
-    logger.info("Start merge config.")
-    merge_config(config, method_dict[method])
+    #logger.info("Start merge config.")
+    config = merge_config(config, method_dict[method])
 
+    if method in ["atac", "co_atac", "patho_atac","dbit", "patho_dbit"]:
+        config_cal(config)
+    elif method in ["co_rna"]:
+        co_rna_cal(config)
     return config
 
 #config, method = load_yaml("/home/sanshou/projects/tool/dbit/zUMIs.yaml")
@@ -143,9 +161,8 @@ def merge_config(config, default_config):
 
 def config_cal(config):
     """
-    计算配置文件中的参数,还要分类dbit
+    计算配置文件中的参数
     """
-    config = method_check(config)
     k1 = len(get_config(config, "linker1"))
     k2 = len(get_config(config, "linker2"))
     bc2_start = get_config(config, "primer") + get_config(config, "UMI")
@@ -155,6 +172,7 @@ def config_cal(config):
     restrictleft1 = bc1_end + k2 + 10
     restrictleft2 = bc2_end + k1 + 10
     seq_start = bc1_end + k1 + 19
+    umi_start = get_config(config, "primer") + 1
     config['preprocess'] = {
         'k1': k1,
         'k2': k2,
@@ -164,8 +182,37 @@ def config_cal(config):
         'bc1_end': bc1_end,
         'restrictleft1': restrictleft1,
         'restrictleft2': restrictleft2,
-        'seq_start': seq_start
+        'seq_start': seq_start,
+        'umi_start': umi_start
     }
-
+    
     return config
 
+def co_rna_cal(config): #需要修改
+    """
+    计算配置文件中的参数
+    """
+    k1 = len(get_config(config, "linker1"))
+    k2 = len(get_config(config, "linker2"))
+    bc2_start = get_config(config, "primer")
+    bc2_end = bc2_start + 8
+    bc1_start = bc2_end + k2
+    bc1_end = bc1_start + 8#8bp barcode
+    restrictleft1 = bc1_end + k2 + 10
+    restrictleft2 = bc2_end + k1 + 10
+    seq_start = bc1_end + k1 + get_config(config, "UMI") + 19
+    umi_start =  bc1_end + k1 + 1 
+    config['preprocess'] = {
+        'k1': k1,
+        'k2': k2,
+        'bc2_start': bc2_start,
+        'bc2_end': bc2_end,
+        'bc1_start': bc1_start,
+        'bc1_end': bc1_end,
+        'restrictleft1': restrictleft1,
+        'restrictleft2': restrictleft2,
+        'seq_start': seq_start,
+        'umi_start': umi_start
+    }
+    
+    return config
