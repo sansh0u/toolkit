@@ -3,9 +3,9 @@ import logging
 
 logger = logging.getLogger("toolkit")
 
-def zUMIs(zumis_path, run_zumis):
+def zUMIs(zumis_path, run_zumis, in1, in2, out):
     '''
-    调用zUMIs
+    调用zUMIs,要把in1,in2,out写进去
     '''
     #需要设置zUMIs.sh位置/或许加入path？
     cmd = [

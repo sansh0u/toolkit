@@ -38,7 +38,7 @@ def run(
     out: str = typer.Option(None, "-out", help="Path to out"),
     config: str = typer.Option(None, "-config", help="Run your own YAML file")
     ):
-    """运行任务并加载配置文件"""
+    """run pipeline"""
     
     if not config_path and not zumis:
         raise typer.BadParameter("Please provide --config or --zumis")
@@ -85,25 +85,18 @@ def run(
             else:
                 raise typer.BadParameter("Please provide -l (zUMIs path) at least once")
 
-        
-
         if not zpath.exists():
             raise typer.BadParameter(f"zUMIs not found: {zpath}")
 
         print(f"Using zUMIs: {zpath}")
 
-            
-        
-    
-        #if not zpath.exists():
-            #raise typer.BadParameter(f"zUMIs not found: {zpath}")
 
-        if config:
+        if config: #zumis -config mode
             if any([dbit, patho, rna]):
                 raise typer.BadParameter("--config cannot be used with -dbit/-patho/-rna")
 
 
-        mode_count = sum([dbit, patho, rna])
+        mode_count = sum([dbit, patho, rna]) 
 
         if mode_count == 0:
             raise typer.BadParameter("Please select one mode: -dbit / -patho / -rna")
@@ -122,15 +115,16 @@ def run(
             mode = "RNA"
 
         print(f"Running zUMIs in {mode} mode")
+        zUMIs(zpath, mode, in1, in2, out)
 
 
 
 
+######################################################################
     if config_path:
        
         print("Pipeline started")
     #logger.info("Pipeline started")
-    
         config = load_yaml(config_path)
         config = method_check(config)
         os.makedirs(get_config(config, "dir"), exist_ok=True)
