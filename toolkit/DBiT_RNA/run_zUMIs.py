@@ -3,16 +3,16 @@ import logging
 
 logger = logging.getLogger("toolkit")
 
-def zUMIs(config_path):
+def zUMIs(zumis_path, run_zumis):
     '''
     调用zUMIs
     '''
-    zUMIs_dir = ()#需要设置zUMIs.sh位置/或许加入path？
+    #需要设置zUMIs.sh位置/或许加入path？
     cmd = [
-        zUMIs_dir,
+        zumis_path,
         #"-c"-C是运行zumis自己的环境要重新下载，如果可以设置好conda
         "-y",
-        config_path 
+        run_zumis 
     ]
     try: ####
         subprocess.run(cmd, check=True)
@@ -20,7 +20,7 @@ def zUMIs(config_path):
         logger.error(f"Error during zUMIs: {e}")
         raise
 
-
+"""
 def run_pipeline(config):
     stage = get_config(config, "which_Stage")
 
@@ -35,3 +35,4 @@ def run_pipeline(config):
 
     if stage in ["Filtering", "Mapping", "Counting", "Summarising"]:
         run_stats(config)
+        """
