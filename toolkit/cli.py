@@ -36,7 +36,9 @@ def run(
     in1: str = typer.Option(None, "-in1", help="Path to in1"),
     in2: str = typer.Option(None, "-in2", help="Path to in2"),
     out: str = typer.Option(None, "-out", help="Path to out"),
-    config: str = typer.Option(None, "-config", help="Run your own YAML file")
+    config: str = typer.Option(None, "-config", help="Run your own YAML file"),
+    illumina: bool = typer.Option(False, "-illumina", help="illumina library"),
+    pcr: bool = typer.Option(False, "-pcr", help="pcr library")
     ):
     """run pipeline"""
     
@@ -46,7 +48,7 @@ def run(
     if config_path and zumis:
         raise typer.BadParameter("--config and --zumis cannot be used together")
 
-    if any([zpath, dbit, patho, rna, in1, in2, out, config]) and not zumis:
+    if any([zpath, dbit, patho, rna, in1, in2, out, config, illumina, pcr]) and not zumis:
             raise typer.BadParameter("Use --zumis to enable zUMIs")
 
     if zumis:
@@ -108,14 +110,22 @@ def run(
             raise typer.BadParameter("Mode requires -in1 -in2 -out")
 
         if dbit:
+            zUMIsconfig = BASE_DIR / "config" / "DBit.yaml"
             mode = "DBiT"
         elif patho:
+            zUMIsconfig = BASE_DIR / "config" / "Patho.yaml"
             mode = "Patho"
         else:
+            zUMIsconfig = BASE_DIR / "config" / "RNA.yaml"
             mode = "RNA"
-
+        
+        #if not illumina and not pcr:
+            
+        
+            
+        
         print(f"Running zUMIs in {mode} mode")
-        zUMIs(zpath, mode, in1, in2, out)
+        zUMIs(zpath, zUMIsconfig, in1, in2, out)
 
 
 

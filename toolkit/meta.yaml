@@ -39,6 +39,7 @@ requirements:
     - stpipeline >=2.1.0
     - star >=2.7.11b
     - samtools >=1.23.1
+    - snapatac2 >=2.9.0
 about:
   home: https://github.com/sansh0u/toolkit
   summary: "My bioinformatics tool"
