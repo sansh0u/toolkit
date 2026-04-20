@@ -14,149 +14,150 @@ from pathlib import Path
 import yaml
 
 
-app = typer.Typer(help = "toolkit", no_args_is_help = True)
+app = typer.Typer(help = """
+ pipeline toolkit
+
+Commands:
+
+  run     Run main pipeline
+  zumis   Run zUMIs pipeline
+
+Examples:
+
+  toolkit run --config config.yaml
+
+  toolkit zumis -dbit -in1 R1.fq -in2 R2.fq -out outdir
+"""
+, no_args_is_help = True)
 
 setup_logger()
 logger = logging.getLogger("toolkit")
 
-
-
-def ask(name = str, default = None):
-    return typer.prompt(name, default = default)        #回车返回默认值
-
-
+# =========================
+# 主 pipeline
+# =========================
 @app.command()
 def run(
-    config_path: str = typer.Option(None,"--config", help="Path to the configuration YAML file"),
-    zumis: bool = typer.Option(False, "--zumis", help="Run zUMIs"),
-    zpath : str = typer.Option(None, "-l", help="Path to zUMIs.sh"),
-    dbit: bool = typer.Option(False, "-dbit", help="Whether to run zUMIs on DBiT"),
-    patho: bool = typer.Option(False, "-patho", help="Whether to run zUMIs on patho"),
-    rna: bool = typer.Option(False, "-rna", help="Whether to run zUMIs on RNA"),
-    in1: str = typer.Option(None, "-in1", help="Path to in1"),
-    in2: str = typer.Option(None, "-in2", help="Path to in2"),
-    out: str = typer.Option(None, "-out", help="Path to out"),
-    config: str = typer.Option(None, "-config", help="Run your own YAML file"),
-    illumina: bool = typer.Option(False, "-illumina", help="illumina library"),
-    pcr: bool = typer.Option(False, "-pcr", help="pcr library")
-    ):
-    """run pipeline"""
-    
-    if not config_path and not zumis:
-        raise typer.BadParameter("Please provide --config or --zumis")
+    config_path: str = typer.Option(None, "--config", help="Pipeline config YAML"),
+):
+    """Run main pipeline"""
 
-    if config_path and zumis:
-        raise typer.BadParameter("--config and --zumis cannot be used together")
+    print("Pipeline started")
 
-    if any([zpath, dbit, patho, rna, in1, in2, out, config, illumina, pcr]) and not zumis:
-            raise typer.BadParameter("Use --zumis to enable zUMIs")
+    config = load_yaml(config_path)
+    config = method_check(config)
 
-    if zumis:
-        BASE_DIR = Path(__file__).resolve().parent
-        CONFIG_FILE = BASE_DIR / "config" / ".config.yaml"
+    os.makedirs(get_config(config, "dir"), exist_ok=True)
+    method = get_config(config, "Method")
 
-        if zpath:
-            zpath = Path(zpath)
-            
-            if zpath.is_dir():
-                zpath = zpath / "zUMIs.sh"
-            
-            if not Path(zpath).exists():
-                raise typer.BadParameter(f"zUMIs not found: {zpath}")
-            
-            if zpath.name != "zUMIs.sh":
-                raise typer.BadParameter("Please provide zUMIs.sh or its directory")
-            
-            CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
-            
-            if zpath.name != "zUMIs.sh":
-                raise typer.BadParameter("Please provide zUMIs.sh or its directory")
-            
-            with open(CONFIG_FILE, "w") as f:
-                yaml.safe_dump({"zumis_path": zpath}, f)
+    print(config)
 
-        else:
-            if CONFIG_FILE.exists():
-                with open(CONFIG_FILE) as f:
-                    cfg = yaml.safe_load(f) or {}
+    if method in ["atac", "co_atac", "patho_atac"]:
+        filter(config)
+        bc_pr(config)
+        chromap(config)
+        sort_bed(config)
 
-                if "zumis_path" in cfg:
-                    zpath = cfg["zumis_path"]
-                else:
-                    raise typer.BadParameter("No zUMIs path found, please provide -l once")
-            else:
-                raise typer.BadParameter("Please provide -l (zUMIs path) at least once")
+    elif method in ["dbit", "co_rna", "patho_dbit"]:
+        filter(config)
+        bc_pro(config)
+        stpipeline(config)
+
+@app.command()
+def zumis(
+    zpath: str = typer.Option(None, "--l", help="Path to zUMIs.sh"),
+    dbit: bool = typer.Option(False, "--dbit", help="DBiT mode"),
+    patho: bool = typer.Option(False, "--patho", help="Patho mode"),
+    rna: bool = typer.Option(False, "--rna", help="RNA mode"),
+    in1: str = typer.Option(None, "--in1"),
+    in2: str = typer.Option(None, "--in2"),
+    out: str = typer.Option(None, "--out"),
+    config: str = typer.Option(None, "--config", help="Custom YAML"),
+    illumina: bool = typer.Option(False, "--illumina"),
+    pcr: bool = typer.Option(False, "--pcr"),   
+):
+    """Run zUMIs pipeline"""
+
+    BASE_DIR = Path(__file__).resolve().parent
+    CONFIG_FILE = BASE_DIR / "config" / ".config.yaml"
+    # ========= zUMIs 路径处理 =========
+    if zpath:
+        zpath = Path(zpath)
+
+        if zpath.is_dir():
+            zpath = zpath / "zUMIs.sh"
 
         if not zpath.exists():
             raise typer.BadParameter(f"zUMIs not found: {zpath}")
 
-        print(f"Using zUMIs: {zpath}")
+        if zpath.name != "zUMIs.sh":
+            raise typer.BadParameter("Please provide zUMIs.sh or its directory")
 
+        CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-        if config: #zumis -config mode
-            if any([dbit, patho, rna]):
-                raise typer.BadParameter("--config cannot be used with -dbit/-patho/-rna")
+        with open(CONFIG_FILE, "w") as f:
+            yaml.safe_dump({"zumis_path": str(zpath)}, f)
+        
+        #  如果只是设置路径（没有任何运行参数），直接退出
+        if not any([dbit, patho, rna, in1, in2, out, config]):
+            print("zUMIs path saved. Ready to use.")
+            raise typer.Exit()
 
+    else:
+        if CONFIG_FILE.exists():
+            with open(CONFIG_FILE) as f:
+                cfg = yaml.safe_load(f) or {}
 
-        mode_count = sum([dbit, patho, rna]) 
-
-        if mode_count == 0:
-            raise typer.BadParameter("Please select one mode: -dbit / -patho / -rna")
-
-        if mode_count > 1:
-            raise typer.BadParameter("Only one mode can be selected")
-
-        if not all([in1, in2, out]):
-            raise typer.BadParameter("Mode requires -in1 -in2 -out")
-
-        if dbit:
-            zUMIsconfig = BASE_DIR / "config" / "DBit.yaml"
-            mode = "DBiT"
-        elif patho:
-            zUMIsconfig = BASE_DIR / "config" / "Patho.yaml"
-            mode = "Patho"
+            if "zumis_path" in cfg:
+                zpath = Path(cfg["zumis_path"])
+            else:
+                raise typer.BadParameter("No zUMIs path found, please provide --l once")
         else:
-            zUMIsconfig = BASE_DIR / "config" / "RNA.yaml"
-            mode = "RNA"
-        
-        #if not illumina and not pcr:
-            
-        
-            
-        
-        print(f"Running zUMIs in {mode} mode")
-        zUMIs(zpath, zUMIsconfig, in1, in2, out)
+            raise typer.BadParameter("Please provide --l (zUMIs path) at least once")
+
+    if not zpath.exists():
+        raise typer.BadParameter(f"zUMIs not found: {zpath}")
+
+    print(f"Using zUMIs: {zpath}")
+
+    # ========= mode 检查 =========
+    if config:
+        if any([dbit, patho, rna]):
+            raise typer.BadParameter("--config cannot be used with --dbit/--patho/--rna")
+
+    mode_count = sum([dbit, patho, rna])
+
+    if mode_count == 0:
+        raise typer.BadParameter("Select one mode: --dbit / --patho / --rna")
+
+    if mode_count > 1:
+        raise typer.BadParameter("Only one mode allowed")
+
+    if not all([in1, in2, out]):
+        raise typer.BadParameter("Require --in1 --in2 --out")
+
+    # ========= 模式 =========
+    if dbit:
+        zUMIsconfig = BASE_DIR / "config" / "DBit.yaml"
+        mode = "DBiT"
+    elif patho:
+        zUMIsconfig = BASE_DIR / "config" / "Patho.yaml"
+        mode = "Patho"
+    else:
+        zUMIsconfig = BASE_DIR / "config" / "RNA.yaml"
+        mode = "RNA"
+
+    print(f"Running zUMIs in {mode} mode")
+
+
+    zUMIs(zpath, zUMIsconfig, in1, in2, out)
 
 
 
 
-######################################################################
-    if config_path:
-       
-        print("Pipeline started")
-    #logger.info("Pipeline started")
-        config = load_yaml(config_path)
-        config = method_check(config)
-        os.makedirs(get_config(config, "dir"), exist_ok=True)
-        method = get_config(config, "Method")
-        print(config)
-        if method in ["atac", "co_atac", "patho_atac"] :
-            #qc
-            filter(config)
-            #过滤bc
-            bc_pr(config)
-            chromap(config)
-            sort_bed(config)
-        elif method in ["dbit", "co_rna","patho_dbit"]:
-            #qc
-            filter(config)
-            #过滤bc
-            bc_pro(config)
-            stpipeline(config)
-        #zUMIs(config)
-#运行完要把上一步文件删了
-
-
+# =========================
+#  入口
+# =========================
 if __name__ == "__main__":
     app()
 

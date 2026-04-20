@@ -40,5 +40,6 @@ def plot_coverage(df, out):
     plt.close()
 
 plot_fragment_distribution(df, "fragment_distribution.png")
-plot_chr_distribution(df, "chr_distribution.png")
-plot_coverage(df, "coverage_distribution.png")
+#plot_chr_distribution(df, "chr_distribution.png")
+#plot_coverage(df, "coverage_distribution.png")
+
