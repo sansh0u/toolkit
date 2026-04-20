@@ -152,10 +152,22 @@ def zumis(
 
     zUMIs(zpath, zUMIsconfig, in1, in2, out)
 
+@app.command()
+def astro(
+    apath: str = typer.Option(None, "--l", help="Path to astro"),
+    config: str = typer.Option(None, "--config", help="Custom YAML")
+):
+    """Run astro pipeline"""
+
+@app.command()
+def matlab(
+    input: str = typer.Option(None, "--in", help="Path to input file"),
+    output: str = typer.Option(None, "--out", help="Path to output file")
+):
+    """Run matlab pipeline"""
 
 
-
-# =========================
+   # =========================
 #  入口
 # =========================
 if __name__ == "__main__":
