@@ -12,6 +12,8 @@ from DBiT_RNA.stpipeline import stpipeline
 from DBiT_RNA.bc_pro import bc_pro 
 from pathlib import Path
 import yaml
+from Pixel_identification import detect_tissue_pixels
+
 
 
 app = typer.Typer(help = """
@@ -36,9 +38,9 @@ logger = logging.getLogger("toolkit")
 # =========================
 # 主 pipeline
 # =========================
-@app.command()
+@app.command(no_args_is_help = True)
 def run(
-    config_path: str = typer.Option(None, "--config", help="Pipeline config YAML"),
+    config_path: str = typer.Option(..., "--config", help="Pipeline config YAML"),
 ):
     """Run main pipeline"""
 
@@ -63,7 +65,7 @@ def run(
         bc_pro(config)
         stpipeline(config)
 
-@app.command()
+@app.command(no_args_is_help = True)
 def zumis(
     zpath: str = typer.Option(None, "--l", help="Path to zUMIs.sh"),
     dbit: bool = typer.Option(False, "--dbit", help="DBiT mode"),
@@ -152,22 +154,31 @@ def zumis(
 
     zUMIs(zpath, zUMIsconfig, in1, in2, out)
 
-@app.command()
+@app.command(no_args_is_help = True)
 def astro(
     apath: str = typer.Option(None, "--l", help="Path to astro"),
     config: str = typer.Option(None, "--config", help="Custom YAML")
 ):
     """Run astro pipeline"""
 
-@app.command()
+@app.command(no_args_is_help = True)
 def matlab(
     input: str = typer.Option(None, "--in", help="Path to input file"),
     output: str = typer.Option(None, "--out", help="Path to output file")
 ):
     """Run matlab pipeline"""
 
+@app.command(no_args_is_help = True)
+def visual(
+    image_path: str = typer.Option(..., "--in", help="Path to input image"),
+    output_file: str = typer.Option("position.txt", "--out", help="Path to output file"),
+    pixel: int = typer.Option(50, "--p", help="Pixel size"),
+    threshold: int = typer.Option(0, "--t", help="Threshold")
+):
+    """Run detect_tissue_pixels pipeline"""
+    detect_tissue_pixels(image_path, output_file, pixel, threshold)
 
-   # =========================
+# =========================
 #  入口
 # =========================
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ def plot_fragment_distribution(df, out):
     plt.title("Fragment Size Distribution")
     plt.savefig(out)
     plt.close()
+
 def plot_chr_distribution(df, out):
     counts = df["chr"].value_counts()
 
@@ -28,6 +29,7 @@ def plot_chr_distribution(df, out):
     plt.title("Chromosome Distribution")
     plt.savefig(out)
     plt.close()
+
 def plot_coverage(df, out):
     df["mid"] = (df["start"] + df["end"]) // 2
 
@@ -40,6 +42,6 @@ def plot_coverage(df, out):
     plt.close()
 
 plot_fragment_distribution(df, "fragment_distribution.png")
-#plot_chr_distribution(df, "chr_distribution.png")
-#plot_coverage(df, "coverage_distribution.png")
+plot_chr_distribution(df, "chr_distribution.png")
+plot_coverage(df, "coverage_distribution.png")
 
