@@ -1,12 +1,14 @@
 import pandas as pd
 
 df = pd.read_csv(
-    "/mnt/d/download/HYS_sample1_sorted.bed.gz",
+    "/home/sanshou/project/toolkit/output/HYS_sample1_sorted.bed.gz",
     sep="\t",
     header=None,
     names=["chr", "start", "end", "name", "score"]
 )
 df["length"] = df["end"] - df["start"]
+
+df = df[df["length"] > 0]
 import matplotlib.pyplot as plt
 
 

@@ -28,7 +28,7 @@ def filter(config):
     restrictleft2 = get_config(config, "restrictleft2")
 
     cmd1 =  [
-        "bbduk.sh",
+        "bbduk",
         f"in={in1}", #merge 两个文件
         f"in2={in2}",
         f"outm={out_dir}/linker1_R1.fastq.gz", ####改名字
@@ -43,7 +43,7 @@ def filter(config):
     ]
 
     cmd2 =  [
-        "bbduk.sh",
+        "bbduk",
         f"in={out_dir}/linker1_R1.fastq.gz",
         f"in2={out_dir}/linker1_R2.fastq.gz",
         f"outm={out_dir}/linker2_R1.fastq.gz", ####
@@ -58,7 +58,7 @@ def filter(config):
     ]
     
     cmd3 = [
-        "bbduk.sh",
+        "bbduk",
         f"in={in1}", #merge 两个文件
         f"in2={in2}",
         f"outm={out_dir}/linker_R1.fastq.gz", ####改名字

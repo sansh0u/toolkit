@@ -1,22 +1,22 @@
 Project: #test
 
-Method: dbit #dbit/atac/co_atac/co_rna/patho_dbit/patho_atac
+Method: patho_dbit #dbit/atac/co_atac/co_rna/patho_dbit/patho_atac
 
 Sequence_file:
-  file1:  /mnt/d/BaiduNetdiskDownload/ukb/KI_0209/KI_0209_L1_1.fq.gz
+  file1:  /mnt/d/prog/RNA2_1209_Illu_1.fq.gz
     
-  file2: /mnt/d/BaiduNetdiskDownload/ukb/KI_0209/KI_0209_L1_2.fq.gz
+  file2: /mnt/d/prog/RNA2_1209_Illu_2.fq.gz
 
 Reference:
-  index_file: /home/sansh0u/project/toolkit/toolkit/index/GRCm38.primary_assembly.genome.index
-  fa_file: /home/sansh0u/project/toolkit/toolkit/index/GRCm38.primary_assembly.genome.fa
-  gtf_file: /home/sansh0u/project/toolkit/toolkit/index/gtf/GRCm38.primary_assembly.gtf
+  index_file: /home/sanshou/project/toolkit/toolkit/index/GRCm38.primary_assembly.genome.index
+  fa_file: /home/sanshou/project/toolkit/toolkit/index/GRCm38.primary_assembly.genome.fa
+  gtf_file: /home/sanshou/project/toolkit/toolkit/index/gtf/GRCm38.primary_assembly.gtf
 
 Barcode:
-  file: /home/sansh0u/project/toolkit/toolkit/barcode/20240614_2500barcode_AB_update.txt
+  file: /home/sanshou/project/toolkit/toolkit/barcode/20240614_2500barcode_AB_update.txt
 
 Out_dir:
-  dir: /home/sansh0u/project/toolkit/output
+  dir: /mnt/d/prog/output
 
 Threads: 8
 
