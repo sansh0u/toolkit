@@ -61,6 +61,7 @@ def run(
         sort_bed(config)
 
     elif method in ["dbit", "co_rna", "patho_dbit"]:
+        
         filter(config)
         bc_pro(config)
         stpipeline(config)

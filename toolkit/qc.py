@@ -29,7 +29,7 @@ def filter(config):
 
     cmd1 =  [
         "bbduk",
-        f"in={in1}", #merge 两个文件
+        f"in={in1}", 
         f"in2={in2}",
         f"outm={out_dir}/linker1_R1.fastq.gz", ####改名字
         f"outm2={out_dir}/linker1_R2.fastq.gz", ####
@@ -59,7 +59,7 @@ def filter(config):
     
     cmd3 = [
         "bbduk",
-        f"in={in1}", #merge 两个文件
+        f"in={in1}", 
         f"in2={in2}",
         f"outm={out_dir}/linker_R1.fastq.gz", ####改名字
         f"outm2={out_dir}/linker_R2.fastq.gz", ####
