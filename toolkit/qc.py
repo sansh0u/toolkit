@@ -14,7 +14,6 @@ def filter(config):
 
     # Placeholder for actual filtering logic需要校对logo信息
     #logger.info("Starting ATAC-seq quality control filtering...")
-    skipr = get_config(config, "skipr")
     out_dir = get_config(config, "dir")
     in1 = get_config(config, "file1")
     in2 = get_config(config, "file2")
@@ -37,7 +36,7 @@ def filter(config):
         f"k={k1}",
         f"literal={linker1}",
         f"threads={threads}",
-        "mm=f", "rcomp=f", f"skipr{skipr}=t",
+        "mm=f", "rcomp=f", f"skipr1=t",
         f"restrictleft={restrictleft1}",
         f"stats={out_dir}/bbduk_stats_L1.txt"
     ]
@@ -52,7 +51,7 @@ def filter(config):
         f"k={k2}",
         f"literal={linker2}",
         f"threads={config['Threads']}",
-        "mm=f", "rcomp=f", f"skipr{skipr}=t",
+        "mm=f", "rcomp=f", f"skipr1=t",
         f"restrictleft={restrictleft2}",
         f"stats={out_dir}/bbduk_stats_L2.txt"
     ]
@@ -67,12 +66,12 @@ def filter(config):
         f"k={k2}",
         f"literal={linker2}",
         f"threads={threads}",
-        "mm=f", "rcomp=f", f"skipr{skipr}=t",
+        "mm=f", "rcomp=f", f"skipr1=t",
         f"restrictleft={restrictleft2}",
         f"stats={out_dir}/bbduk_stats_L1.txt"
     ]
     try: ####
-        if linker1 != "":
+        if k1 != 0:
             subprocess.run(cmd1, check=True)
             subprocess.run(cmd2, check=True)
             subprocess.run(["rm", "-r",f"{out_dir}/linker1_R1.fastq.gz", f"{out_dir}/linker1_R2.fastq.gz"], check=True)
@@ -82,7 +81,7 @@ def filter(config):
         #logger.info("ATAC-seq filtering completed successfully.")
         #返回点东西让我知道成功了
     except subprocess.CalledProcessError as e:
-        #logger.error(f"Error during ATAC-seq filtering: {e}")
+        logger.error(f"Error during ATAC-seq filtering: {e}")
         raise
 
     #logger.info("ATAC-seq quality control filtering completed.")

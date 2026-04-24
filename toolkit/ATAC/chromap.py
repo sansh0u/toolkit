@@ -8,14 +8,9 @@ def chromap(config):
     """
     根据提供的配置对ATAC-seq数据进行chromap分析
     """
-    skipr = get_config(config, "skipr")
-    if skipr == 1:
-        output_file_R2 = f"{get_config(config, 'dir')}/linker2_R1.fastq.gz"
-        subprocess.run(["rm", f"{get_config(config, 'dir')}/linker2_R2.fastq.gz"], check=True)
-    else:
-        output_file_R2 = f"{get_config(config, 'dir')}/linker2_R2.fastq.gz"
-        subprocess.run(["rm", f"{get_config(config, 'dir')}/linker2_R1.fastq.gz"], check=True)
     output_file_R1 = f"{get_config(config, 'dir')}/output_R1.fastq.gz"
+    output_file_R2 = f"{get_config(config, 'dir')}/linker2_R1.fastq.gz"
+    subprocess.run(["rm", f"{get_config(config, 'dir')}/linker2_R2.fastq.gz"], check=True)
     b_file = f"{get_config(config, 'dir')}/output_R2.fastq.gz"
     index_file = get_config(config, 'index_file')
     fa_file = get_config(config, 'fa_file')

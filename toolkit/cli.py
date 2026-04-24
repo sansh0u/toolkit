@@ -2,7 +2,7 @@
 import typer
 import os
 import logging
-from yaml_load import load_yaml,method_check, get_config
+from yaml_load import load_yaml, get_config, config_cal
 from logger import setup_logger
 from DBiT_RNA.run_zUMIs import zUMIs
 from qc import filter
@@ -13,6 +13,7 @@ from DBiT_RNA.bc_pro import bc_pro
 from pathlib import Path
 import yaml
 from Pixel_identification import detect_tissue_pixels
+from scan_bc import scan
 
 
 
@@ -47,20 +48,20 @@ def run(
     print("Pipeline started")
 
     config = load_yaml(config_path)
-    config = method_check(config)
-
     os.makedirs(get_config(config, "dir"), exist_ok=True)
     method = get_config(config, "Method")
-
+    bc2_loc, bc1_loc, read_len = scan(config)
+    config = config_cal(config, bc2_loc, bc1_loc, read_len)
     print(config)
 
-    if method in ["atac", "co_atac", "patho_atac"]:
+    if method == "ATAC":
+        
         filter(config)
         bc_pr(config)
         chromap(config)
         sort_bed(config)
 
-    elif method in ["dbit", "co_rna", "patho_dbit"]:
+    elif method == "RNA":
         
         filter(config)
         bc_pro(config)

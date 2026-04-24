@@ -22,7 +22,6 @@ def plot_fragment_distribution(df, out, bins=500, max_len=1000, log_y=False):
 
     plt.figure(figsize=(6, 4))
 
-    # 👉 纯 count（每个 fragment 算1）
     counts, bin_edges = np.histogram(
         df["length"],
         bins=bins,
@@ -31,7 +30,7 @@ def plot_fragment_distribution(df, out, bins=500, max_len=1000, log_y=False):
 
     bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
 
-    # 👉 折线图
+    
     plt.plot(bin_centers, counts)
 
     if log_y:
